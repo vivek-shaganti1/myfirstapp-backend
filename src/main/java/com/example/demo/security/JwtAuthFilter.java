@@ -22,9 +22,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
@@ -36,22 +36,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(token)) {
 
                 String email = jwtUtil.extractEmail(token);
-                String role = jwtUtil.extractRole(token); // 🔥 ADD THIS
+                String role = jwtUtil.extractRole(token); // ADMIN / USER
 
                 UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                email,
-                                null,
-                                List.of(() -> "ROLE_" + role)
-                        );
-
-                auth.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
-                );
+                    new UsernamePasswordAuthenticationToken(
+                        email,
+                        null,
+                        List.of(() -> "ROLE_" + role)
+                    );
 
                 SecurityContextHolder.getContext()
-                        .setAuthentication(auth);
+                    .setAuthentication(auth);
             }
         }
 

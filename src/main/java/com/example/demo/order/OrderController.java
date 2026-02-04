@@ -36,16 +36,28 @@ public class OrderController {
         return ResponseEntity.ok(orderService.cancelOrder(orderId));
     }
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<Order> getAllOrders() {
         return orderRepo.findAll();
     }
+    @PostMapping("/buy-now")
+    public Order buyNow(
+            @RequestParam Long productId,
+            @RequestParam int quantity
+    ) {
+        return orderService.buyNow(productId, quantity);
+    }
     @PutMapping("/status/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Order updateOrderStatus(
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public Order updateStatus(
             @PathVariable Long id,
             @RequestParam String status
     ) {
-        return orderService.updateStatus(id, status);
+        Order order = orderRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setStatus(status);
+        return orderRepo.save(order);
     }
     @PutMapping("/test")
     public String testOrders() {
@@ -56,7 +68,7 @@ public class OrderController {
         return "ORDERS CONTROLLER OK";
     }
     @GetMapping("/admin/summary")
-    @PreAuthorize("hasRole('ADMIN')")
+   
     public Map<String, Object> adminSummary() {
         List<Order> orders = orderRepo.findAll();
 
@@ -80,4 +92,5 @@ public class OrderController {
 
         return res;
     }
+    
 }

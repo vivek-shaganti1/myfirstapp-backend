@@ -6,6 +6,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.List;
+
 @Configuration
 public class CorsConfig {
 
@@ -13,10 +15,21 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
 
         CorsConfiguration config = new CorsConfiguration();
+
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173");
+
+        // ✅ ALLOWED ORIGINS (ADD LIVE FRONTEND HERE)
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:5173",
+            "https://*.netlify.app",
+            "https://*.vercel.app"
+        ));
+
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+
+        // Important for JWT
+        config.addExposedHeader("Authorization");
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

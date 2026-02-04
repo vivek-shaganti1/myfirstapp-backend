@@ -1,11 +1,12 @@
 
 package com.example.demo.order;
-
+import org.hibernate.annotations.CreationTimestamp;
 import com.example.demo.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -18,14 +19,17 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    
+    @Column(nullable = false)
+    private String status; // PLACED, PAID, SHIPPED, DELIVERED
 
+    private String paymentId;
     // 💰 Total price snapshot
     private double totalAmount;
 
-    // 📦 Order status
-    private String status; // PLACED, PAID, SHIPPED, CANCELLED
 
     // ⏰ When order was placed
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     // 📄 Order items
@@ -79,5 +83,11 @@ public class Order {
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
+    }
+    public String getPaymentId() {
+        return paymentId;
+    }
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 }

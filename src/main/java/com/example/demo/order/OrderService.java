@@ -1,13 +1,19 @@
 package com.example.demo.order;
 
-import com.example.demo.*;
+import com.example.demo.Cart;
+import com.example.demo.Product;
+import com.example.demo.User;
+import com.example.demo.CartRepository;
+import com.example.demo.ProductRepository;
+import com.example.demo.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Service
 public class OrderService {
 
@@ -22,7 +28,10 @@ public class OrderService {
 
     @Autowired
     private UserRepository userRepo;
-
+    
+    @Autowired
+    private ProductRepository productRepo;
+    
     public Order placeOrder() {
 
         // 🔐 Get logged-in user from JWT
@@ -100,5 +109,37 @@ public class OrderService {
 
         order.setStatus(status);
         return orderRepo.save(order);
+    }
+    public Order buyNow(Long productId, int quantity) {
+        User user = getCurrentUser();
+        Product product = productRepo.findById(productId)
+            .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Order order = new Order();
+        order.setUser(user);
+       
+       
+
+        OrderItem item = new OrderItem();
+        item.setOrder(order);
+        item.setProduct(product);
+        item.setQuantity(quantity);
+        item.setPrice(product.getPrice());
+
+        order.setItems(List.of(item));
+        order.setTotalAmount(product.getPrice() * quantity);
+
+        return orderRepo.save(order);
+    }
+    @Transactional
+    public void markOrderPaid(Long orderId, String paymentId) {
+
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setStatus("PAID");
+        order.setPaymentId(paymentId);
+
+        orderRepo.save(order);
     }
 }
