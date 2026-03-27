@@ -87,6 +87,13 @@ public class ProductController {
             );
 
         }
+        if(product.getProductCode() == null){
+
+            product.setProductCode(
+                    CodeGenerator.generateProductCode()
+            );
+
+        }
 
         // default values safety
         if(product.getStock() == 0){

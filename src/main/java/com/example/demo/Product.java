@@ -52,7 +52,18 @@ public class Product {
     @CollectionTable(name = "product_colors")
     private List<String> colors;
 
+    @ManyToOne
+    private ProductCollection collection;
+    @Column(unique = true)
+    private String productCode;
 
+    private Integer editionNumber;
+
+    private String rarityLevel;
+
+    private boolean collectible = true;
+
+    private boolean activated = false;
     // ========================
     // GETTERS & SETTERS
     // ========================
@@ -159,6 +170,45 @@ public class Product {
 
     public void setColors(List<String> colors) {
         this.colors = colors;
+    }
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public Integer getEditionNumber() {
+        return editionNumber;
+    }
+
+    public void setEditionNumber(Integer editionNumber) {
+        this.editionNumber = editionNumber;
+    }
+
+    public String getRarityLevel() {
+        return rarityLevel;
+    }
+
+    public void setRarityLevel(String rarityLevel) {
+        this.rarityLevel = rarityLevel;
+    }
+
+    public boolean isCollectible() {
+        return collectible;
+    }
+
+    public void setCollectible(boolean collectible) {
+        this.collectible = collectible;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 
 }
