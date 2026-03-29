@@ -1,7 +1,7 @@
 package com.example.demo;
-
 import java.util.List;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "product")
@@ -35,22 +35,26 @@ public class Product {
     private String imageUrl;
 
     /* multiple images */
-    @ElementCollection
-    @CollectionTable(name = "product_images")
-    private List<String> images;
+   
 
     /* product description */
     @Column(length = 2000)
     private String description;
 
     /* product variants */
-    @ElementCollection
-    @CollectionTable(name = "product_sizes")
-    private List<String> sizes;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ProductImage> images;
 
-    @ElementCollection
-    @CollectionTable(name = "product_colors")
-    private List<String> colors;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value="product-size")
+    private List<ProductSize> sizes;
+
+    @JsonManagedReference(value="product-color")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductColor> colors;
+
+   
 
     @ManyToOne
     private ProductCollection collection;
@@ -140,13 +144,7 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public List<String> getImages() {
-        return images;
-    }
 
-    public void setImages(List<String> images) {
-        this.images = images;
-    }
 
     public String getDescription() {
         return description;
@@ -156,19 +154,27 @@ public class Product {
         this.description = description;
     }
 
-    public List<String> getSizes() {
+    public List<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
+    }
+
+    public List<ProductSize> getSizes() {
         return sizes;
     }
 
-    public void setSizes(List<String> sizes) {
+    public void setSizes(List<ProductSize> sizes) {
         this.sizes = sizes;
     }
 
-    public List<String> getColors() {
+    public List<ProductColor> getColors() {
         return colors;
     }
 
-    public void setColors(List<String> colors) {
+    public void setColors(List<ProductColor> colors) {
         this.colors = colors;
     }
     public String getProductCode() {

@@ -13,7 +13,13 @@ import java.util.Optional;
 @RequestMapping("/api/cart")
 @CrossOrigin(origins = "http://localhost:5173")
 public class CartController {
+	// TEMP USER until login is implemented
+	private User getDefaultUser() {
 
+	    return userRepo.findById(1L)
+	            .orElseThrow(() -> new RuntimeException("Test user not found"));
+
+	}
     @Autowired
     private CartRepository cartRepo;
 
@@ -27,12 +33,13 @@ public class CartController {
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody CartRequest request) {
 
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+//        String email = SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getName();
+//
+//        User user = userRepo.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+    	User user = getDefaultUser();
 
         Product product = productRepo.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -59,12 +66,13 @@ public class CartController {
     @GetMapping
     public List<Cart> getMyCart() {
 
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+//        String email = SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getName();
+//
+//        User user = userRepo.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+    	User user = getDefaultUser();
 
         return cartRepo.findByUser(user);
     }

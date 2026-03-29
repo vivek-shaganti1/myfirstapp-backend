@@ -103,6 +103,14 @@ public class ProductController {
         }
 
         product.setActive(true);
+        if(product.getImages()!=null)
+        	product.getImages().forEach(i -> i.setProduct(product));
+
+        	if(product.getSizes()!=null)
+        	product.getSizes().forEach(s -> s.setProduct(product));
+
+        	if(product.getColors()!=null)
+        	product.getColors().forEach(c -> c.setProduct(product));
 
         return productRepo.save(product);
 
@@ -140,10 +148,12 @@ public class ProductController {
 
         existing.setImageUrl(product.getImageUrl());
 
+        product.getImages().forEach(i -> i.setProduct(existing));
+        product.getSizes().forEach(s -> s.setProduct(existing));
+        product.getColors().forEach(c -> c.setProduct(existing));
+
         existing.setImages(product.getImages());
-
         existing.setSizes(product.getSizes());
-
         existing.setColors(product.getColors());
 
         existing.setActive(product.isActive());

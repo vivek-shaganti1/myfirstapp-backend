@@ -6,7 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
-
+import com.example.demo.UserRepository;
+import com.example.demo.User;
 @RestController
 @RequestMapping("/api/orders")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -17,7 +18,8 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepo;
-
+    @Autowired
+    private UserRepository userRepo;
     // 🔥 PLACE ORDER (CHECKOUT)
     @PostMapping("/place")
     public ResponseEntity<?> placeOrder() {
@@ -25,11 +27,20 @@ public class OrderController {
     }
 
     // 📦 GET MY ORDERS
+//    @GetMapping("/my")
+//    public List<Order> getMyOrders() {
+//        return orderRepo.findByUser(
+//            orderService.getCurrentUser()
+//        );
+//    }
     @GetMapping("/my")
     public List<Order> getMyOrders() {
-        return orderRepo.findByUser(
-            orderService.getCurrentUser()
-        );
+
+        User user = userRepo.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return orderRepo.findByUser(user);
+
     }
     @PutMapping("/cancel/{orderId}")
     public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
